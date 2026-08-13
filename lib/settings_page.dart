@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html' as html;
+//import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../services/resume_storage.dart';
@@ -42,7 +42,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _importBackup() async {
     if (kIsWeb) {
-      final input = html.FileUploadInputElement();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Web 导入功能暂不可用')));
+      return;
+      /*final input = html.FileUploadInputElement();
       input.accept = '.json';
       input.click();
       input.onChange.listen((event) async {
@@ -56,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
             await _doImport(jsonStr);
           }
         });
-      });
+      });*/
     } else {
       if (mounted) {
         ScaffoldMessenger.of(

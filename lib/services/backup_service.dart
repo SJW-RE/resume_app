@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'dart:html' as html; // Web端使用
+//import 'dart:html' as html; // Web端使用
 import '../models/resume.dart';
 import 'resume_storage.dart';
 
@@ -33,8 +33,11 @@ class BackupService {
   }
 
   /// 下载 JSON 备份文件（Web端）
-  static void downloadWeb(String jsonStr, {String filename = 'resume_backup.json'}) {
-    if (!kIsWeb) return;
+  static void downloadWeb(
+    String jsonStr, {
+    String filename = 'resume_backup.json',
+  }) {
+    /*if (!kIsWeb) return;
     final blob = html.Blob([jsonStr], 'application/json');
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.AnchorElement(href: url)
@@ -42,11 +45,14 @@ class BackupService {
       ..click();
     Future.delayed(const Duration(seconds: 5), () {
       html.Url.revokeObjectUrl(url);
-    });
+    });*/
   }
 
   /// 导出并分享文件（移动端）
-  static Future<void> shareBackup(String jsonStr, {String filename = 'resume_backup.json'}) async {
+  static Future<void> shareBackup(
+    String jsonStr, {
+    String filename = 'resume_backup.json',
+  }) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final file = File('${directory.path}/$filename');
