@@ -9,7 +9,7 @@ import '../templates/ats_template.dart';
 import '../models/education.dart';
 import '../models/project.dart';
 import '../models/skill.dart';
-import 'dart:html' if (dart.library.html) 'dart:html' as html;
+//import 'dart:html' if (dart.library.html) 'dart:html' as html;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:printing/printing.dart';
 import '../services/ai_polish_service.dart';
@@ -27,6 +27,7 @@ import 'dart:convert';
 import '../ads/rewarded_ad_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/member_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditorPage extends StatefulWidget {
   final Resume? resume;
@@ -126,29 +127,49 @@ class _EditorPageState extends State<EditorPage> {
   // ============================================================
   // Web端头像选择
   // ============================================================
-  void _pickAvatar() {
-    final input = html.FileUploadInputElement();
-    input.accept = 'image/*';
-    input.multiple = false;
-    input.onChange.listen((e) {
-      final files = input.files;
-      if (files != null && files.isNotEmpty) {
-        final file = files[0];
-        final reader = html.FileReader();
-        reader.readAsArrayBuffer(file);
-        reader.onLoadEnd.listen((e) {
-          final bytes = reader.result as Uint8List?;
-          if (bytes != null) {
-            setState(() {
-              _currentResume.personal.avatarImage = bytes;
-            });
-          }
-        });
-      }
-      input.value = null;
-    });
-    input.click();
+ //void _pickAvatar() {
+  //  final input = html.FileUploadInputElement();
+    //input.accept = 'image/*';
+   // input.multiple = false;
+   // input.onChange.listen((e) {
+    //  final files = input.files;
+    //  if (files != null && files.isNotEmpty) {
+     //   final file = files[0];
+     //   final reader = html.FileReader();
+     //   reader.readAsArrayBuffer(file);
+      //  reader.onLoadEnd.listen((e) {
+       //   final bytes = reader.result as Uint8List?;
+        //  if (bytes != null) {
+        //    setState(() {
+        //      _currentResume.personal.avatarImage = bytes;
+        //    });
+        //  }
+       // });
+     // }
+    //  input.value = null;
+  //  });
+ //   input.click();
+ // }
+ void _pickAvatar() async {
+  try {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery, // 从相册选择，可改为 camera
+      maxWidth: 400,
+      maxHeight: 400,
+      imageQuality: 80,
+    );
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _currentResume.personal.avatarImage = bytes;
+      });
+    }
+  } catch (e) {
+    print('选择头像失败: $e');
   }
+}
+  
 
   void _saveAndClose() async {
     if (_formKey.currentState!.validate()) {
@@ -566,12 +587,16 @@ class _EditorPageState extends State<EditorPage> {
   /// 执行实际导出（Web 下载或移动端分享）
   Future<void> _performExport(Uint8List bytes) async {
     if (kIsWeb) {
-      final blob = html.Blob([bytes], 'application/pdf');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', '${_currentResume.name}_简历.pdf')
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      //final blob = html.Blob([bytes], 'application/pdf');
+      //final url = html.Url.createObjectUrlFromBlob(blob);
+      //final anchor = html.AnchorElement(href: url)
+      //  ..setAttribute('download', '${_currentResume.name}_简历.pdf')
+      // ..click();
+      //html.Url.revokeObjectUrl(url);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Web 下载功能暂不可用')));
+      return;
     } else {
       await Printing.sharePdf(
         bytes: bytes,
